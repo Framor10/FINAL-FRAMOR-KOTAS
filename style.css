@@ -748,7 +748,13 @@
         .order-item:last-child {
             border-bottom: none;
         }
-        
+        .order-date {
+            padding: 8px 0;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: var(--kfc-red);
+            border-bottom: 2px solid var(--kfc-red);
+        }
         .order-total {
             font-size: 1.3rem;
             font-weight: bold;
@@ -1848,4 +1854,5 @@
         
         .success-message {
             animation: slideDown 0.4s ease-out;
+
         }
