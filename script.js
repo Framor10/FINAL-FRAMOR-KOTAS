@@ -153,12 +153,17 @@ orderNowBtn.addEventListener('click', () => {
 // Populate Order Summary
 function populateOrderSummary() {
     const orderItemsList = document.getElementById('order-items-list');
-    orderItemsList.innerHTML = cart.map(item => `
+    const currentDate = new Date().toLocaleDateString('en-ZA', { year: 'numeric', month: 'long', day: 'numeric' });
+    
+    let summary = `<div class="order-date"><strong>Date:</strong> ${currentDate}</div>`;
+    summary += cart.map(item => `
         <div class="order-item">
             <span>${item.name} x${item.quantity}</span>
             <span>R${(item.price * item.quantity).toFixed(2)}</span>
         </div>
     `).join('');
+    
+    orderItemsList.innerHTML = summary;
     updateCartTotal();
 }
 
@@ -219,11 +224,11 @@ Total: R${total.toFixed(2)}
     }
     
     // Show success message
-    successMessageText.textContent = `Your order has been sent via ${orderMethod === 'whatsapp' ? 'WhatsApp' : 'Email'}.`;
+    successMessageText.textContent = 'Order Placed Successful';
     successMessage.classList.add('show');
     setTimeout(() => {
         successMessage.classList.remove('show');
-    }, 3000);
+    }, 5000);
     
     // Reset form and close modal
     orderForm.reset();
@@ -270,3 +275,4 @@ function showSuccessMessage(message) {
 document.addEventListener('DOMContentLoaded', () => {
     updateCartUI();
 });
+
