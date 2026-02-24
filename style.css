@@ -1314,10 +1314,14 @@
                 left: 10px;
                 top: 20px;
                 transform: translateX(0);
+                transform: translateY(-150px);
                 font-size: 0.9rem;
                 padding: 15px;
+                transition: transform 0.5s;
             }
-            
+            .success-message.show {
+                transform: translateY(0);
+            }
             .success-message i {
                 font-size: 1.5rem;
                 flex-shrink: 0;
@@ -1856,3 +1860,4 @@
             animation: slideDown 0.4s ease-out;
 
         }
+
