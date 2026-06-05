@@ -3129,20 +3129,6 @@
     
     function saveCartToStorage() { localStorage.setItem('framor_cart', JSON.stringify(cart)); }
     function loadCartFromStorage() { const saved = localStorage.getItem('framor_cart'); if (saved) { cart = JSON.parse(saved); updateCartUI(); } }
-
-    function validatePhone(phone) {
-    const regex = /^[0-9]{10}$/; // South African format (10 digits)
-    return regex.test(phone);
-}
-
-function validateEmail(email) {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-}
-
-function sanitizeInput(input) {
-    if (!input) return '';
-    return String(input).replace(/[<>{}()[\]\\]/g, '');
     
     function populateOrderSummary() {
         const orderItemsList = document.getElementById('order-items-list');
@@ -3308,25 +3294,6 @@ function sanitizeInput(input) {
         const phone = document.getElementById('customer-phone').value;
         const email = document.getElementById('customer-email').value;
         const address = sanitizeInput(document.getElementById('customer-address').value);
-        
-        // VALIDATE PHONE NUMBER
-        if (!validatePhone(phone)) {
-            showSuccessMessage('❌ Please enter a valid 10-digit phone number!');
-            return;
-        }
-        
-        // VALIDATE EMAIL
-        if (!validateEmail(email)) {
-            showSuccessMessage('❌ Please enter a valid email address!');
-            return;
-        }
-        
-        // Check for empty fields
-        if (!name || !address) {
-            showSuccessMessage('❌ Please fill in all required fields!');
-            return;
-        }
-        
         const deliveryTime = document.getElementById('delivery-time').value;
         const paymentMethod = document.getElementById('payment-method').value;
         const orderMethod = document.querySelector('.order-method.active').dataset.method;
