@@ -2259,18 +2259,22 @@
                     <div class="form-group">
                         <label><i class="fas fa-user"></i> Full Name</label>
                         <input type="text" id="customer-name" required placeholder="Enter your full name">
+                        <small class="error-text" id="name-error" style="color:#dc3545; display:none;"></small>
                     </div>
                     <div class="form-group">
-                        <label><i class="fas fa-phone"></i> Phone Number</label>
-                        <input type="tel" id="customer-phone" required placeholder="Enter your phone number">
+                        <label><i class="fas fa-phone"></i> Phone Number (SA format: 060 905 0450)</label>
+                        <input type="tel" id="customer-phone" required placeholder="Enter your South African phone number">
+                        <small class="error-text" id="phone-error" style="color:#dc3545; display:none;"></small>
                     </div>
                     <div class="form-group">
                         <label><i class="fas fa-envelope"></i> Email Address</label>
                         <input type="email" id="customer-email" required placeholder="Enter your email address">
+                        <small class="error-text" id="email-error" style="color:#dc3545; display:none;"></small>
                     </div>
                     <div class="form-group">
                         <label><i class="fas fa-map-marker-alt"></i> Delivery Address</label>
-                        <textarea id="customer-address" rows="3" required placeholder="Enter your full delivery address"></textarea>
+                        <textarea id="customer-address" rows="3" required placeholder="Enter your full delivery address (street, suburb, city)"></textarea>
+                        <small class="error-text" id="address-error" style="color:#dc3545; display:none;"></small>
                     </div>
                     <div class="form-group">
                         <label><i class="fas fa-clock"></i> Preferred Delivery Time</label>
@@ -2383,6 +2387,97 @@
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
+    // ==================== SECURITY & VALIDATION MODULE ====================
+    // Disable right-click (basic protection)
+    document.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        return false;
+    });
+    
+    // Disable common dev tools shortcuts
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'F12' || 
+            (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'C' || e.key === 'J')) ||
+            (e.ctrlKey && e.key === 'u')) {
+            e.preventDefault();
+            return false;
+        }
+    });
+    
+    // Rate limiting for form submissions (prevent spam)
+    let lastSubmitTime = 0;
+    const SUBMIT_COOLDOWN = 30000; // 30 seconds
+    
+    // Validate South African phone number
+    function validateSAPhone(phone) {
+        // Remove all non-digit characters
+        const cleaned = phone.replace(/\D/g, '');
+        // SA formats: 10 digits starting with 0, or 11 digits starting with 27, or 9 digits starting with 6/7/8
+        const patterns = [
+            /^0[6-8][0-9]{8}$/,      // 0609050450
+            /^27[6-8][0-9]{8}$/,     // 27609050450
+            /^[6-8][0-9]{8}$/        // 609050450
+        ];
+        return patterns.some(p => p.test(cleaned));
+    }
+    
+    function formatSAPhoneForDisplay(phone) {
+        const cleaned = phone.replace(/\D/g, '');
+        if (cleaned.length === 10 && cleaned.startsWith('0')) {
+            return cleaned.replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3');
+        }
+        if (cleaned.length === 11 && cleaned.startsWith('27')) {
+            return '0' + cleaned.slice(2).replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3');
+        }
+        if (cleaned.length === 9) {
+            return '0' + cleaned.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3');
+        }
+        return phone;
+    }
+    
+    // Validate email
+    function validateEmail(email) {
+        const re = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
+        return re.test(email);
+    }
+    
+    // Validate name (at least 2 letters, only letters and spaces)
+    function validateName(name) {
+        return name.trim().length >= 2 && /^[A-Za-z\s'-]+$/.test(name.trim());
+    }
+    
+    // Validate address (not empty, at least 10 chars)
+    function validateAddress(address) {
+        return address.trim().length >= 5;
+    }
+    
+    // Show field error
+    function showFieldError(fieldId, message) {
+        const errorSpan = document.getElementById(fieldId);
+        if (errorSpan) {
+            errorSpan.textContent = message;
+            errorSpan.style.display = 'block';
+            setTimeout(() => {
+                errorSpan.style.display = 'none';
+            }, 4000);
+        }
+        const input = document.getElementById(fieldId.replace('-error', ''));
+        if (input) {
+            input.style.borderColor = '#dc3545';
+            setTimeout(() => {
+                input.style.borderColor = '#e0e0e0';
+            }, 3000);
+        }
+    }
+    
+    // Clear all form errors
+    function clearFormErrors() {
+        document.querySelectorAll('.error-text').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('#order-form input, #order-form textarea, #order-form select').forEach(el => {
+            el.style.borderColor = '#e0e0e0';
+        });
+    }
+    
     // Supabase Configuration
     const SUPABASE_URL = 'https://joacqpwfcgqksytwmjpp.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_1yQyD_7IVY-dX1EotfM0vQ_1Ay3-IkT';
@@ -2778,8 +2873,6 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }, 3000);
     }
-
-    
     
     // Floating Food Particles
     function createFoodParticle(x, y) {
@@ -3351,14 +3444,68 @@
         });
     });
     
-    // Order Form Submission with Confetti
+    // Order Form Submission with Validation & Security
     if (orderForm) {
         orderForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const name = document.getElementById('customer-name').value;
-            const phone = document.getElementById('customer-phone').value;
-            const email = document.getElementById('customer-email').value;
-            const address = document.getElementById('customer-address').value;
+            
+            // Rate limiting check
+            const now = Date.now();
+            if (now - lastSubmitTime < SUBMIT_COOLDOWN) {
+                const waitSec = Math.ceil((SUBMIT_COOLDOWN - (now - lastSubmitTime)) / 1000);
+                showSuccessMessage(`⚠️ Please wait ${waitSec} seconds before ordering again.`);
+                return;
+            }
+            
+            clearFormErrors();
+            let isValid = true;
+            
+            // Validate Name
+            const name = document.getElementById('customer-name').value.trim();
+            if (!validateName(name)) {
+                showFieldError('name-error', 'Please enter a valid full name (letters and spaces only, at least 2 characters).');
+                isValid = false;
+            }
+            
+            // Validate Phone (SA format)
+            let phone = document.getElementById('customer-phone').value.trim();
+            if (!validateSAPhone(phone)) {
+                showFieldError('phone-error', 'Please enter a valid South African phone number (e.g., 060 905 0450 or 0609050450).');
+                isValid = false;
+            } else {
+                // Format phone nicely before storing
+                phone = formatSAPhoneForDisplay(phone);
+                document.getElementById('customer-phone').value = phone;
+            }
+            
+            // Validate Email
+            const email = document.getElementById('customer-email').value.trim();
+            if (!validateEmail(email)) {
+                showFieldError('email-error', 'Please enter a valid email address (e.g., name@example.com).');
+                isValid = false;
+            }
+            
+            // Validate Address
+            const address = document.getElementById('customer-address').value.trim();
+            if (!validateAddress(address)) {
+                showFieldError('address-error', 'Please enter your complete delivery address (street, suburb, city).');
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                showSuccessMessage('❌ Please fix the errors above before submitting.');
+                return;
+            }
+            
+            // If cart is empty
+            if (cart.length === 0) {
+                showSuccessMessage('Your cart is empty. Please add items before ordering.');
+                return;
+            }
+            
+            // Update last submit time
+            lastSubmitTime = now;
+            
             const deliveryTime = document.getElementById('delivery-time').value;
             const paymentMethod = document.getElementById('payment-method').value;
             const orderMethod = document.querySelector('.order-method.active').dataset.method;
