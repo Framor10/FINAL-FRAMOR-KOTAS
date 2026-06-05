@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Add to your <head> section -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#E4002B">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Errol Kotas | Premium Kota Chips & Fast Food</title>
@@ -917,6 +921,160 @@
             width: 100%;
             aspect-ratio: 9 / 16;
             object-fit: cover;
+        }
+
+        .section-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.65);
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 40px 20px;
+            z-index: 5000;
+            visibility: hidden;
+            opacity: 0;
+            transition: var(--transition);
+            overflow-y: auto;
+        }
+
+        .section-modal.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .section-modal-panel {
+            width: 100%;
+            max-width: 1100px;
+            background: var(--white);
+            border-radius: 28px;
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.08);
+        }
+
+        .section-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 28px 32px;
+            background: linear-gradient(135deg, var(--primary-red), var(--primary-red-dark));
+            color: var(--white);
+        }
+
+        .section-modal-header h2 {
+            margin: 0;
+            font-size: 2rem;
+            letter-spacing: 0.5px;
+        }
+
+        .section-modal-header p {
+            margin: 0;
+            opacity: 0.95;
+            font-size: 0.95rem;
+        }
+
+        .section-modal-close {
+            background: rgba(255,255,255,0.14);
+            border: none;
+            color: var(--white);
+            font-size: 1.6rem;
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .section-modal-close:hover {
+            background: rgba(255,255,255,0.24);
+            transform: scale(1.05);
+        }
+
+        .section-modal-content {
+            padding: 32px;
+            background: var(--white);
+        }
+
+        .section-page-intro {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 30px;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .section-page-intro h3 {
+            margin: 0 0 12px;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--black);
+        }
+
+        .section-page-intro p {
+            margin: 0;
+            color: var(--gray-dark);
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .section-page-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .section-page-card {
+            background: #fafafa;
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .section-page-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .section-page-card img {
+            width: 100%;
+            height: 210px;
+            object-fit: cover;
+        }
+
+        .section-page-card-body {
+            padding: 20px;
+        }
+
+        .section-page-card-body h4 {
+            margin: 0 0 10px;
+            font-size: 1.1rem;
+            color: var(--black);
+        }
+
+        .section-page-card-body p {
+            margin: 0 0 15px;
+            color: var(--gray);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .section-page-card-body .section-card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            color: var(--primary-red);
+        }
+
+        @media (max-width: 900px) {
+            .section-page-intro {
+                grid-template-columns: 1fr;
+            }
         }
         
         .close-video-modal {
@@ -2121,6 +2279,32 @@
             </div>
         </div>
     </div>
+
+    <!-- Section Overlay Page -->
+    <div class="section-modal" id="section-modal">
+        <div class="section-modal-panel">
+            <div class="section-modal-header">
+                <div>
+                    <h2 id="section-modal-title">Category</h2>
+                    <p id="section-modal-subtitle">Explore the best menu items in this category.</p>
+                </div>
+                <button class="section-modal-close" id="section-modal-close">&times;</button>
+            </div>
+            <div class="section-modal-content" id="section-modal-content">
+                <div class="section-page-intro">
+                    <div>
+                        <h3 id="section-modal-heading">Premium Selections</h3>
+                        <p id="section-modal-description">View expertly curated items for this category in a clean white page layout.</p>
+                    </div>
+                    <div style="padding: 24px; background: #fff6ea; border-radius: 24px; box-shadow: var(--shadow-sm); border: 1px solid rgba(255,182,62,0.25);">
+                        <h4 style="margin:0 0 10px; color: var(--primary-red);">Quick Actions</h4>
+                        <p style="margin:0; color: var(--gray-dark); line-height:1.6;">Use the section page to browse items, add to cart, and return instantly.</p>
+                    </div>
+                </div>
+                <div class="section-page-grid" id="section-page-grid"></div>
+            </div>
+        </div>
+    </div>
     
     <!-- Confetti Canvas -->
     <canvas id="confetti-canvas"></canvas>
@@ -2182,7 +2366,52 @@
             badge: "NEW"
         }
     ];
-    
+
+    const sectionMeta = {
+        'reels': {
+            title: 'Video Reels',
+            subtitle: 'Explore our behind-the-scenes food videos in a clean presentation.',
+            heading: 'Watch Our Reels',
+            description: 'Get a closer look at how we prepare the freshest ingredients and signature recipes. Enjoy each reel in a modern white page layout.',
+            empty: 'No reels are available yet. Check back soon.'
+        },
+        'snacks': {
+            title: 'Tasty Snacks',
+            subtitle: 'Find snacks that are perfect for every craving.',
+            heading: 'Tasty Snacks',
+            description: 'Crispy bites, savory treats, and snack combos designed to satisfy your hunger fast.',
+            empty: 'No snacks are available yet. We are updating the menu.'
+        },
+        'kota-chips': {
+            title: 'Kota & Chips',
+            subtitle: 'Delicious kota recipes and crispy chips served hot.',
+            heading: 'Kota & Chips',
+            description: 'Discover premium kota dishes and perfectly seasoned chips prepared fresh for every order.',
+            empty: 'No kota items are available yet. Please check back shortly.'
+        },
+        'drinks': {
+            title: 'Drinks',
+            subtitle: 'Refreshments to pair with your meal.',
+            heading: 'Refreshing Drinks',
+            description: 'Choose from ice-cold sodas, milkshakes, and fresh beverages made to order.',
+            empty: 'No drinks are available yet. Our bar is getting stocked.'
+        },
+        'burger': {
+            title: 'Burgers',
+            subtitle: 'Juicy burgers made the way you like them.',
+            heading: 'Delicious Burgers',
+            description: 'Explore our premium burgers, from classic beef to loaded chicken and special combos.',
+            empty: 'No burgers are available yet. We are cooking up new recipes.'
+        },
+        'pizza': {
+            title: 'Pizzas',
+            subtitle: 'Freshly baked pizzas with bold flavour.',
+            heading: 'Freshly Baked Pizzas',
+            description: 'Choose from classic favorites and specialty pizzas topped with premium ingredients.',
+            empty: 'No pizzas are available yet. More options are coming soon.'
+        }
+    };
+
     // ENHANCED AI CHAT BOT WITH PRODUCT CARD DISPLAY
     function searchAndDisplayProducts(query) {
         const searchTerm = query.toLowerCase();
@@ -2917,21 +3146,109 @@
     }
     
     // Category Filter
+    const sectionModal = document.getElementById('section-modal');
+    const sectionModalClose = document.getElementById('section-modal-close');
+    const sectionModalTitle = document.getElementById('section-modal-title');
+    const sectionModalSubtitle = document.getElementById('section-modal-subtitle');
+    const sectionModalHeading = document.getElementById('section-modal-heading');
+    const sectionModalDescription = document.getElementById('section-modal-description');
+    const sectionPageGrid = document.getElementById('section-page-grid');
+
     document.querySelectorAll('.category-item').forEach(cat => {
         cat.addEventListener('click', () => {
             document.querySelectorAll('.category-item').forEach(c => c.classList.remove('active'));
             cat.classList.add('active');
             const category = cat.dataset.category;
-            if (category === 'reels') {
-                document.getElementById('reels').scrollIntoView({ behavior: 'smooth' });
-            } else {
-                currentCategory = category;
-                renderAllSections();
-                document.getElementById(category)?.scrollIntoView({ behavior: 'smooth' });
+            openSectionPage(category);
+        });
+    });
+
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', (e) => {
+            const href = link.getAttribute('href');
+            if (href && href.startsWith('#')) {
+                e.preventDefault();
+                document.querySelector(href)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                document.querySelectorAll('.nav-links a').forEach(nav => nav.classList.remove('active'));
+                link.classList.add('active');
             }
         });
     });
-    
+
+    function openSectionPage(category) {
+        const meta = sectionMeta[category] || sectionMeta['kota-chips'];
+        sectionModalTitle.textContent = meta.title;
+        sectionModalSubtitle.textContent = meta.subtitle;
+        sectionModalHeading.textContent = meta.heading;
+        sectionModalDescription.textContent = meta.description;
+        sectionPageGrid.innerHTML = '';
+        document.body.style.overflow = 'hidden';
+
+        if (category === 'reels') {
+            sectionPageGrid.innerHTML = videoReels.map(reel => `
+                <div class="section-page-card">
+                    <img src="${reel.thumbnail}" alt="${escapeHtml(reel.title)}">
+                    <div class="section-page-card-body">
+                        <h4>${escapeHtml(reel.title)}</h4>
+                        <p>${escapeHtml(reel.description)}</p>
+                        <div class="section-card-meta">${reel.duration} • ${reel.badge || 'VIDEO'}</div>
+                        <button class="add-to-cart" style="margin-top: 14px; width: 100%;" data-video-id="${reel.id}">Play Reel</button>
+                    </div>
+                </div>
+            `).join('');
+
+            sectionPageGrid.querySelectorAll('.add-to-cart').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const videoId = parseInt(btn.dataset.videoId, 10);
+                    const reel = videoReels.find(item => item.id === videoId);
+                    if (reel) openVideoModal(reel);
+                });
+            });
+        } else {
+            const catProducts = products.filter(p => p.category === category);
+            if (catProducts.length === 0) {
+                sectionPageGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color: var(--gray-dark);">${meta.empty}</div>`;
+            } else {
+                sectionPageGrid.innerHTML = catProducts.map(prod => `
+                    <div class="section-page-card">
+                        <img src="${prod.image || 'https://via.placeholder.com/400x300?text=Errol+Kotas'}" alt="${escapeHtml(prod.name)}">
+                        <div class="section-page-card-body">
+                            <h4>${escapeHtml(prod.name)}</h4>
+                            <p>${escapeHtml(prod.desc || 'Delicious meal prepared fresh for you.')}</p>
+                            <div class="section-card-meta">R${prod.price.toFixed(2)}</div>
+                            <button class="add-to-cart" style="margin-top: 14px; width: 100%;" data-product="${escapeHtml(prod.name)}" data-price="${prod.price}">
+                                <i class="fas fa-cart-plus"></i> Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+                sectionPageGrid.querySelectorAll('.add-to-cart').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const name = btn.dataset.product;
+                        const price = parseFloat(btn.dataset.price);
+                        addToCart(name, price, 1);
+                        showSuccessMessage(`${name} added to cart!`);
+                    });
+                });
+            }
+        }
+        sectionModal.classList.add('active');
+    }
+
+    if (sectionModalClose) {
+        sectionModalClose.addEventListener('click', () => {
+            sectionModal.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+    }
+
+    sectionModal.addEventListener('click', (e) => {
+        if (e.target === sectionModal) {
+            sectionModal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
+
     // Modal Controls
     if (cartIcon) cartIcon.addEventListener('click', () => cartModal.classList.add('active'));
     if (closeCartBtn) closeCartBtn.addEventListener('click', () => cartModal.classList.remove('active'));
@@ -3020,8 +3337,8 @@
         });
     }
     
-    // Smooth Scroll for navigation
-    document.querySelectorAll('.nav-links a, .cta-button').forEach(link => {
+    // Smooth Scroll for CTA buttons only
+    document.querySelectorAll('.cta-button').forEach(link => {
         link.addEventListener('click', (e) => {
             const href = link.getAttribute('href');
             if (href && href !== '#') {
