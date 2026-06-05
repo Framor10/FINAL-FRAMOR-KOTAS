@@ -3129,6 +3129,20 @@
     
     function saveCartToStorage() { localStorage.setItem('framor_cart', JSON.stringify(cart)); }
     function loadCartFromStorage() { const saved = localStorage.getItem('framor_cart'); if (saved) { cart = JSON.parse(saved); updateCartUI(); } }
+
+    function validatePhone(phone) {
+    const regex = /^[0-9]{10}$/; // South African format (10 digits)
+    return regex.test(phone);
+}
+
+function validateEmail(email) {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+}
+
+function sanitizeInput(input) {
+    if (!input) return '';
+    return String(input).replace(/[<>{}()[\]\\]/g, '');
     
     function populateOrderSummary() {
         const orderItemsList = document.getElementById('order-items-list');
@@ -3285,18 +3299,41 @@
     });
     
     // Order Form Submission with Confetti
-    if (orderForm) {
-        orderForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const name = document.getElementById('customer-name').value;
-            const phone = document.getElementById('customer-phone').value;
-            const email = document.getElementById('customer-email').value;
-            const address = document.getElementById('customer-address').value;
-            const deliveryTime = document.getElementById('delivery-time').value;
-            const paymentMethod = document.getElementById('payment-method').value;
-            const orderMethod = document.querySelector('.order-method.active').dataset.method;
-            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const orderSummary = cart.map(item => `${item.name} x${item.quantity} - R${(item.price * item.quantity).toFixed(2)}`).join('\n');
+   if (orderForm) {
+    orderForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        // Get values and sanitize them
+        const name = sanitizeInput(document.getElementById('customer-name').value);
+        const phone = document.getElementById('customer-phone').value;
+        const email = document.getElementById('customer-email').value;
+        const address = sanitizeInput(document.getElementById('customer-address').value);
+        
+        // VALIDATE PHONE NUMBER
+        if (!validatePhone(phone)) {
+            showSuccessMessage('❌ Please enter a valid 10-digit phone number!');
+            return;
+        }
+        
+        // VALIDATE EMAIL
+        if (!validateEmail(email)) {
+            showSuccessMessage('❌ Please enter a valid email address!');
+            return;
+        }
+        
+        // Check for empty fields
+        if (!name || !address) {
+            showSuccessMessage('❌ Please fill in all required fields!');
+            return;
+        }
+        
+        const deliveryTime = document.getElementById('delivery-time').value;
+        const paymentMethod = document.getElementById('payment-method').value;
+        const orderMethod = document.querySelector('.order-method.active').dataset.method;
+        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const orderSummary = cart.map(item => `${item.name} x${item.quantity} - R${(item.price * item.quantity).toFixed(2)}`).join('\n');
+        
+        // ... REST OF YOUR EXISTING ORDER CODE CONTINUES NORMALLY
             
             const newOrder = { 
                 id: Date.now(), 
