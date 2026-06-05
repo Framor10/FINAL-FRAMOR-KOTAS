@@ -3285,22 +3285,18 @@
     });
     
     // Order Form Submission with Confetti
-   if (orderForm) {
-    orderForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        // Get values and sanitize them
-        const name = sanitizeInput(document.getElementById('customer-name').value);
-        const phone = document.getElementById('customer-phone').value;
-        const email = document.getElementById('customer-email').value;
-        const address = sanitizeInput(document.getElementById('customer-address').value);
-        const deliveryTime = document.getElementById('delivery-time').value;
-        const paymentMethod = document.getElementById('payment-method').value;
-        const orderMethod = document.querySelector('.order-method.active').dataset.method;
-        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const orderSummary = cart.map(item => `${item.name} x${item.quantity} - R${(item.price * item.quantity).toFixed(2)}`).join('\n');
-        
-        // ... REST OF YOUR EXISTING ORDER CODE CONTINUES NORMALLY
+    if (orderForm) {
+        orderForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('customer-name').value;
+            const phone = document.getElementById('customer-phone').value;
+            const email = document.getElementById('customer-email').value;
+            const address = document.getElementById('customer-address').value;
+            const deliveryTime = document.getElementById('delivery-time').value;
+            const paymentMethod = document.getElementById('payment-method').value;
+            const orderMethod = document.querySelector('.order-method.active').dataset.method;
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const orderSummary = cart.map(item => `${item.name} x${item.quantity} - R${(item.price * item.quantity).toFixed(2)}`).join('\n');
             
             const newOrder = { 
                 id: Date.now(), 
